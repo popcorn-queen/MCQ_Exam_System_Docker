@@ -15,14 +15,47 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Update exam config
+// Upload questions (replaces all existing questions)
+router.post("/upload-questions", verifyToken, async (req, res) => {
+  const { questions } = req.body;
+  if (!Array.isArray(questions) || questions.length === 0)
+    return res.status(400).json({ message: "Invalid questions format" });
+
+  // Validate each question has required fields
+  for (const q of questions) {
+    if (!q.question || !q.type || !q.options || !q.correctAnswer)
+      return res.status(400).json({ message: `Invalid question: ${JSON.stringify(q)}` });
+  }
+
+  // Replace all questions
+  await pool.query("DELETE FROM questions");
+  for (const q of questions) {
+    await pool.query("INSERT INTO questions(question_data) VALUES($1)", [JSON.stringify(q)]);
+  }
+
+  res.json({ message: `${questions.length} questions uploaded successfully` });
+});
+
+// Get all uploaded questions (for preview in dashboard)
+router.get("/questions", verifyToken, async (req, res) => {
+  const result = await pool.query("SELECT id, question_data FROM questions ORDER BY id");
+  res.json(result.rows.map(r => ({ id: r.id, ...r.question_data })));
+});
+
+// Save exam config (subject, duration, questionsToShow, randomise)
 router.post("/config", verifyToken, async (req, res) => {
   const { config } = req.body;
   await pool.query(
-    "INSERT INTO exam_config(config_json, is_active) VALUES($1, false) RETURNING *",
-    [JSON.stringify(config)]  // ← stringify the whole object
+    "INSERT INTO exam_config(config_json, is_active) VALUES($1, false)",
+    [JSON.stringify(config)]
   );
   res.json({ message: "Config saved" });
+});
+
+// Get all configs
+router.get("/configs", verifyToken, async (req, res) => {
+  const result = await pool.query("SELECT id, is_active, config_json FROM exam_config");
+  res.json(result.rows);
 });
 
 // Activate exam
@@ -35,34 +68,37 @@ router.post("/activate", verifyToken, async (req, res) => {
 
 // Get results
 router.get("/results", verifyToken, async (req, res) => {
-  const result = await pool.query("SELECT * FROM student_attempts");
+  const result = await pool.query("SELECT * FROM student_attempts ORDER BY submitted_at DESC");
   res.json(result.rows);
+});
+
+// Clear all questions
+router.delete("/clear-questions", verifyToken, async (req, res) => {
+  await pool.query("DELETE FROM questions");
+  res.json({ message: "All questions cleared" });
+});
+
+// Clear all results
+router.delete("/clear-results", verifyToken, async (req, res) => {
+  await pool.query("DELETE FROM student_attempts");
+  res.json({ message: "All results cleared" });
+});
+
+// Deactivate exam
+router.post("/deactivate", verifyToken, async (req, res) => {
+  await pool.query("UPDATE exam_config SET is_active = false");
+  res.json({ message: "Exam deactivated" });
 });
 
 // Export CSV
 router.get("/export", verifyToken, async (req, res) => {
-  const result = await pool.query("SELECT * FROM student_attempts");
+  const result = await pool.query("SELECT * FROM student_attempts ORDER BY submitted_at DESC");
   let csv = "roll_number,class,section,score,max_score,percentage,submitted_at\n";
   result.rows.forEach(r => {
     csv += `${r.roll_number},${r.class},${r.section},${r.score},${r.max_score},${r.percentage},${r.submitted_at}\n`;
   });
   res.setHeader("Content-Type", "text/csv");
   res.send(csv);
-});
-
-router.get("/configs", verifyToken, async (req, res) => {
-  const result = await pool.query("SELECT id, is_active, config_json FROM exam_config");
-  res.json(result.rows);
-});
-
-router.post("/seed", async (req, res) => {
-  const fs = require("fs");
-  const questions = JSON.parse(fs.readFileSync("/app/questions.json"));
-  await pool.query(
-    "INSERT INTO exam_config(config_json, is_active) VALUES($1, false)",
-    [JSON.stringify({ duration: 30, questions: questions.questions })]
-  );
-  res.json({ message: "Seeded!" });
 });
 
 module.exports = router;

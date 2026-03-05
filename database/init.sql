@@ -1,7 +1,14 @@
+
 CREATE TABLE exam_config (
   id SERIAL PRIMARY KEY,
   config_json JSONB,
   is_active BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE questions (
+  id SERIAL PRIMARY KEY,
+  question_data JSONB NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE student_attempts (
@@ -15,7 +22,3 @@ CREATE TABLE student_attempts (
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   answers_json JSONB
 );
-
-INSERT INTO exam_config (config_json, is_active)
-SELECT '{"duration": 30}', false
-WHERE NOT EXISTS (SELECT 1 FROM exam_config);

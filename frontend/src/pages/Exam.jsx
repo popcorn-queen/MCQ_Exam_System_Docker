@@ -15,6 +15,7 @@ function Exam() {
   const [examStarted, setExamStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState((examConfig?.durationMinutes || 30) * 60);
   const finishCalled = useRef(false);
+  const { schoolName } = useBranding();
 
   // Load questions from config if available, fallback to questions.json
   useEffect(() => {
@@ -90,7 +91,7 @@ function Exam() {
       {/* Title Panel */}
       <div className="flex items-center justify-between bg-blue-700 text-white px-6 py-3">
         <div>
-          <div className="text-lg font-bold">{examConfig?.schoolName || "School Name"}</div>
+          <div className="fw-bold fs-5">{schoolName || "School Name"}</div>
           <div className="text-sm">{examConfig?.subject || "Subject"} — {examConfig?.examTitle || "Exam"}</div>
         </div>
         <div className="text-right">
