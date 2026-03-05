@@ -1,11 +1,12 @@
 import React from "react";
 
 export default function Timer({ timeLeft }) {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  const m = Math.floor(timeLeft / 60).toString().padStart(2, "0");
+  const s = (timeLeft % 60).toString().padStart(2, "0");
+  const urgent = timeLeft < 60;
   return (
-    <div className="text-xl font-bold">
-      {minutes.toString().padStart(2, "0")}:{seconds.toString().padStart(2, "0")}
+    <div className={`fw-bold fs-4 ${urgent ? "text-danger" : "text-white"}`}>
+      ⏱ {m}:{s}
     </div>
   );
 }

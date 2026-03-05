@@ -18,11 +18,17 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl mb-4">Admin Login</h1>
-      <input placeholder="Username" className="border p-2 mb-2" value={user} onChange={e=>setUser(e.target.value)} />
-      <input type="password" placeholder="Password" className="border p-2 mb-4" value={pass} onChange={e=>setPass(e.target.value)} />
-      <button className="bg-blue-600 text-white px-4 py-2" onClick={login}>Login</button>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+      <div className="card shadow p-4" style={{ width: "100%", maxWidth: 400 }}>
+        <h2 className="card-title text-center mb-4">Admin Login</h2>
+        <div className="mb-3">
+          <input className="form-control" placeholder="Username" value={user} onChange={e => setUser(e.target.value)} />
+        </div>
+        <div className="mb-3">
+          <input className="form-control" type="password" placeholder="Password" value={pass} onChange={e => setPass(e.target.value)} />
+        </div>
+        <button className="btn btn-dark w-100" onClick={login}>Login</button>
+      </div>
     </div>
   );
 }

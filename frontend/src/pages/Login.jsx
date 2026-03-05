@@ -9,26 +9,29 @@ function Login() {
 
   const handleSubmit = async () => {
     if (!roll || !cls || !section) return alert("Fill all fields");
-
-    // Check exam active
     const resp = await fetch("/api/exam/status");
     const data = await resp.json();
     if (!data.active) return alert("Exam not started yet");
-
-    // Save student info in sessionStorage
     sessionStorage.setItem("student", JSON.stringify({ roll, cls, section }));
     sessionStorage.setItem("examConfig", JSON.stringify(data.config));
-
     navigate("/exam");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl mb-4">Student Login</h1>
-      <input placeholder="Roll Number" className="border p-2 mb-2" value={roll} onChange={e=>setRoll(e.target.value)} />
-      <input placeholder="Class" className="border p-2 mb-2" value={cls} onChange={e=>setCls(e.target.value)} />
-      <input placeholder="Section" className="border p-2 mb-4" value={section} onChange={e=>setSection(e.target.value)} />
-      <button className="bg-blue-600 text-white px-4 py-2" onClick={handleSubmit}>Login</button>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+      <div className="card shadow p-4" style={{ width: "100%", maxWidth: 400 }}>
+        <h2 className="card-title text-center mb-4">Student Login</h2>
+        <div className="mb-3">
+          <input className="form-control" placeholder="Roll Number" value={roll} onChange={e => setRoll(e.target.value)} />
+        </div>
+        <div className="mb-3">
+          <input className="form-control" placeholder="Class" value={cls} onChange={e => setCls(e.target.value)} />
+        </div>
+        <div className="mb-3">
+          <input className="form-control" placeholder="Section" value={section} onChange={e => setSection(e.target.value)} />
+        </div>
+        <button className="btn btn-primary w-100" onClick={handleSubmit}>Login</button>
+      </div>
     </div>
   );
 }

@@ -2,17 +2,22 @@ import React from "react";
 
 export default function NavigationGrid({ questions, locked, currentIndex, setCurrentIndex }) {
   return (
-    <div className="w-32 grid grid-cols-4 gap-2 mr-4">
+    <div className="d-flex flex-wrap gap-2">
       {questions.map((q, idx) => {
         const isLocked = locked.includes(q.id);
         const isCurrent = currentIndex === idx;
-        const classes = `w-8 h-8 flex items-center justify-center border rounded cursor-pointer ${
-          isLocked ? "bg-blue-600 text-white" : "bg-white"
-        } ${isCurrent ? "border-4 border-black" : ""}`;
+        let variant = "outline-secondary";
+        if (isLocked) variant = "primary";
+        else if (isCurrent) variant = "warning";
         return (
-          <div key={q.id} className={classes} onClick={() => setCurrentIndex(idx)}>
+          <button
+            key={q.id}
+            onClick={() => setCurrentIndex(idx)}
+            className={`btn btn-${variant} btn-sm`}
+            style={{ width: 38, height: 38, padding: 0, fontWeight: 600 }}
+          >
             {idx + 1}
-          </div>
+          </button>
         );
       })}
     </div>

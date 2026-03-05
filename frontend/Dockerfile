@@ -1,12 +1,8 @@
-# 1️⃣ Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Copy package.json and install dependencies
 COPY package*.json ./
 RUN npm install
-
-# Copy all source files and build React app
+RUN ls node_modules | grep tailwind  # ← add this line temporarily
 COPY . .
 RUN npm run build
 
