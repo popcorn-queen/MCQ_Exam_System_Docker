@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { CheckCircle } from "@phosphor-icons/react";
 
 export default function QuestionPanel({ question, selected, answerQuestion, lockQuestion, isLocked }) {
   const [singleSelected, setSingleSelected] = useState(selected || null);
   const [multiSelected, setMultiSelected] = useState(selected || []);
+  const [confirmError, setConfirmError] = useState("");
 
   useEffect(() => {
+    setConfirmError("");
     if (question?.type === "single") setSingleSelected(selected || null);
     if (question?.type === "multiple") setMultiSelected(selected || []);
   }, [question?.id]);
@@ -13,84 +16,98 @@ export default function QuestionPanel({ question, selected, answerQuestion, lock
 
   const handleSingle = (opt) => {
     if (isLocked) return;
+    setConfirmError("");
     setSingleSelected(opt);
     answerQuestion(question.id, opt);
   };
 
   const confirmSingle = () => {
-    if (!singleSelected) return alert("Please select an option.");
+    if (!singleSelected) return setConfirmError("Please select an option before confirming.");
     lockQuestion(question.id);
   };
 
   const handleMulti = (opt) => {
     if (isLocked) return;
+    setConfirmError("");
     setMultiSelected(prev =>
       prev.includes(opt) ? prev.filter(o => o !== opt) : [...prev, opt]
     );
   };
 
   const confirmMulti = () => {
-    if (multiSelected.length === 0) return alert("Select at least one option.");
+    if (multiSelected.length === 0) return setConfirmError("Please select at least one option before confirming.");
     answerQuestion(question.id, multiSelected);
     lockQuestion(question.id);
   };
 
+  const isMultiple = question.type === "multiple";
+
   return (
-    <div className="card flex-grow-1">
+    <div className="card flex-grow-1" style={{ backgroundColor: "var(--theme-card-bg)", borderColor: "var(--theme-secondary)" }}>
       <div className="card-body">
-        <div className="text-muted small mb-1">
+
+        {/* Question meta */}
+        <div className="small mb-1" style={{ color: "var(--theme-text-muted)" }}>
           Question {question.id}
-          <span className={`badge ms-2 ${question.type === "multiple" ? "bg-warning text-dark" : "bg-info text-dark"}`}>
-            {question.type === "multiple" ? "Multiple choice" : "Single choice"}
+          <span className="badge ms-2" style={{
+            backgroundColor: isMultiple ? "#ffc107" : "var(--theme-secondary)",
+            color: isMultiple ? "#000" : "var(--theme-primary-text)"
+          }}>
+            {isMultiple ? "Multiple choice" : "Single choice"}
           </span>
-          {isLocked && <span className="badge bg-success ms-2">✔ Answered</span>}
+          {isLocked && (
+            <span className="badge ms-2" style={{ backgroundColor: "#198754", color: "white" }}>
+              <CheckCircle size={13} weight="fill" className="me-1" />Answered
+            </span>
+          )}
         </div>
-        <h5 className="card-title mb-4">{question.question}</h5>
 
-        {/* Single choice */}
-        {question.type === "single" && question.options.map(opt => (
-          <div
-            key={opt}
-            onClick={() => handleSingle(opt)}
-            className={`d-flex align-items-center gap-2 p-3 mb-2 rounded border
-              ${isLocked ? "" : "cursor-pointer"}
-              ${(isLocked ? selected : singleSelected) === opt ? "border-primary bg-primary bg-opacity-10 fw-semibold" : "border-light-subtle"}
-            `}
-            style={{ cursor: isLocked ? "default" : "pointer" }}
-          >
-            <input
-              type="radio"
-              checked={(isLocked ? selected : singleSelected) === opt}
-              disabled={isLocked}
-              onChange={() => handleSingle(opt)}
-              className="form-check-input mt-0"
-            />
-            {opt}
-          </div>
-        ))}
+        <h5 className="card-title mb-4" style={{ color: "var(--theme-text-dark)" }}>{question.question}</h5>
 
-        {/* Confirm button for single */}
-        {question.type === "single" && !isLocked && (
-          <button
-            className="btn btn-primary mt-2"
-            onClick={confirmSingle}
-            disabled={!singleSelected}
-          >
-            Confirm Answer
-          </button>
-        )}
+        {/* Single choice options */}
+        {!isMultiple && question.options.map(opt => {
+          const isSelected = (isLocked ? selected : singleSelected) === opt;
+          return (
+            <div
+              key={opt}
+              onClick={() => handleSingle(opt)}
+              className="d-flex align-items-center gap-2 p-3 mb-2 rounded border"
+              style={{
+                cursor: isLocked ? "default" : "pointer",
+                borderColor: isSelected ? "var(--theme-primary)" : "var(--theme-secondary)",
+                backgroundColor: isSelected ? "var(--theme-primary)" : "transparent",
+                color: isSelected ? "var(--theme-primary-text)" : "var(--theme-text-dark)",
+                fontWeight: isSelected ? 600 : 400,
+                transition: "all 0.15s ease",
+              }}
+            >
+              <input
+                type="radio"
+                checked={isSelected}
+                disabled={isLocked}
+                onChange={() => handleSingle(opt)}
+                className="form-check-input mt-0"
+              />
+              {opt}
+            </div>
+          );
+        })}
 
-        {/* Multiple choice */}
-        {question.type === "multiple" && question.options.map(opt => {
+        {/* Multiple choice options */}
+        {isMultiple && question.options.map(opt => {
           const isChecked = (isLocked ? selected : multiSelected)?.includes(opt);
           return (
             <label
               key={opt}
-              className={`d-flex align-items-center gap-2 p-3 mb-2 rounded border
-                ${isLocked ? "" : "cursor-pointer"}
-                ${isChecked ? "border-primary bg-primary bg-opacity-10 fw-semibold" : "border-light-subtle"}
-              `}
-              style={{ cursor: isLocked ? "default" : "pointer" }}
+              className="d-flex align-items-center gap-2 p-3 mb-2 rounded border"
+              style={{
+                cursor: isLocked ? "default" : "pointer",
+                borderColor: isChecked ? "var(--theme-primary)" : "var(--theme-secondary)",
+                backgroundColor: isChecked ? "var(--theme-primary)" : "transparent",
+                color: isChecked ? "var(--theme-primary-text)" : "var(--theme-text-dark)",
+                fontWeight: isChecked ? 600 : 400,
+                transition: "all 0.15s ease",
+              }}
             >
               <input
                 type="checkbox"
@@ -104,18 +121,29 @@ export default function QuestionPanel({ question, selected, answerQuestion, lock
           );
         })}
 
-        {/* Confirm button for multiple */}
-        {question.type === "multiple" && !isLocked && (
+        {/* Inline confirm error */}
+        {confirmError && (
+          <div className="alert alert-warning py-2 small mt-2 mb-0" role="alert">
+            {confirmError}
+          </div>
+        )}
+
+        {/* Confirm button */}
+        {!isLocked && (
           <button
-            className="btn btn-primary mt-2"
-            onClick={confirmMulti}
-            disabled={multiSelected.length === 0}
+            className="btn theme-btn mt-3"
+            onClick={isMultiple ? confirmMulti : confirmSingle}
+            disabled={isMultiple ? multiSelected.length === 0 : !singleSelected}
           >
             Confirm Answer
           </button>
         )}
 
-        {isLocked && <p className="text-muted small mt-3 fst-italic">This answer is locked and cannot be changed.</p>}
+        {isLocked && (
+          <p className="small fst-italic mt-3 mb-0" style={{ color: "var(--theme-text-muted)" }}>
+            This answer is locked and cannot be changed.
+          </p>
+        )}
       </div>
     </div>
   );

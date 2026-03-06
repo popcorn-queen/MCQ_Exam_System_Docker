@@ -1,10 +1,21 @@
 {
-  "schoolName": "Your School Name",
+  "schoolName": "PRIA School",
   "logoFile": "logo.png",
-  "bgColor": "#ffffff",
   "theme": {
-    "primary": "#ffffff",
-    "secondary": "#0f0f0f",
-    "background": "#00ffff"
+    "background":    "#fefee3",
+    "cardBg":        "#ffffff",
+    "textDark":      "#353535",
+    "textMuted":     "#6b6b6b",
+
+    "btnPrimary":    "#577590",
+    "btnConfirm":    "#90be6d",
+    "btnNavigate":   "#43aa8b",
+    "btnDestructive":"#f94144",
+    "btnCancel":     "#bcb8b1",
+    "btnNeutral":    "#f9c74f",
+    "btnGhost":      "#faf9f9",
+
+    "shadow":        "#353535",
+    "border":        "#353535"
   }
 }

@@ -7,8 +7,13 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ExamRoute, ResultRoute } from "./components/StudentRoute";
+import useBranding from "./hooks/useBranding";
 
 function App() {
+  // Called once here so CSS variables are injected globally on every page.
+  // Individual pages can still call useBranding() if they need schoolName/logoFile.
+  useBranding();
+
   return (
     <BrowserRouter>
       <Routes>

@@ -1,11 +1,26 @@
 import { useState, useEffect } from "react";
 
+const DEFAULTS = {
+  background:     "#fefee3",
+  cardBg:         "#ffffff",
+  textDark:       "#353535",
+  textMuted:      "#6b6b6b",
+  btnPrimary:     "#577590",
+  btnConfirm:     "#90be6d",
+  btnNavigate:    "#43aa8b",
+  btnDestructive: "#f94144",
+  btnCancel:      "#bcb8b1",
+  btnNeutral:     "#f9c74f",
+  btnGhost:       "#faf9f9",
+  shadow:         "#353535",
+  border:         "#353535",
+};
+
 export default function useBranding() {
   const [branding, setBranding] = useState({
     schoolName: "",
     logoFile: null,
-    bgColor: "#f8f9fa",
-    theme: { primary: "#0d6efd", secondary: "#6c757d", background: "#f8f9fa" }
+    theme: DEFAULTS,
   });
 
   useEffect(() => {
@@ -13,33 +28,31 @@ export default function useBranding() {
       .then(r => r.json())
       .then(data => {
         setBranding(data);
-        // Inject theme as CSS variables on :root
-        const t = data.theme || {};
-        const root = document.documentElement;
-        if (t.primary) {
-          root.style.setProperty("--theme-primary", t.primary);
-          root.style.setProperty("--bs-primary", t.primary);
-          root.style.setProperty("--bs-primary-rgb", hexToRgb(t.primary));
-        }
-        if (t.secondary) {
-          root.style.setProperty("--theme-secondary", t.secondary);
-          root.style.setProperty("--bs-secondary", t.secondary);
-          root.style.setProperty("--bs-secondary-rgb", hexToRgb(t.secondary));
-        }
-        if (t.background) {
-          root.style.setProperty("--theme-bg", t.background);
-          document.body.style.backgroundColor = t.background;
-        }
+        applyTheme(data.theme || {});
       })
-      .catch(() => {});
+      .catch(() => applyTheme(DEFAULTS));
   }, []);
 
   return branding;
 }
 
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
+function applyTheme(t) {
+  const root = document.documentElement;
+  const set = (v, val) => val && root.style.setProperty(v, val);
+
+  set("--theme-bg",             t.background);
+  set("--theme-card-bg",        t.cardBg);
+  set("--theme-text-dark",      t.textDark);
+  set("--theme-text-muted",     t.textMuted);
+  set("--theme-btn-primary",    t.btnPrimary);
+  set("--theme-btn-confirm",    t.btnConfirm);
+  set("--theme-btn-navigate",   t.btnNavigate);
+  set("--theme-btn-destructive",t.btnDestructive);
+  set("--theme-btn-cancel",     t.btnCancel);
+  set("--theme-btn-neutral",    t.btnNeutral);
+  set("--theme-btn-ghost",      t.btnGhost);
+  set("--theme-shadow",         t.shadow);
+  set("--theme-border",         t.border);
+
+  if (t.background) document.body.style.backgroundColor = t.background;
 }

@@ -1,41 +1,198 @@
-
-:root {
-  --theme-primary: #0d6efd;
-  --theme-secondary: #6c757d;
-  --theme-bg: #f8f9fa;
+/* ─── Force font everywhere ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  font-family: 'Lucida Console', 'Courier New', monospace !important;
 }
 
+
+   Overridden at runtime by useBranding() from public/config.json.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --theme-bg:              #fefee3;
+  --theme-card-bg:         #ffffff;
+  --theme-text-dark:       #353535;
+  --theme-text-muted:      #6b6b6b;
+
+  --theme-btn-primary:     #577590;
+  --theme-btn-confirm:     #90be6d;
+  --theme-btn-navigate:    #43aa8b;
+  --theme-btn-destructive: #f94144;
+  --theme-btn-cancel:      #bcb8b1;
+  --theme-btn-neutral:     #f9c74f;
+  --theme-btn-ghost:       #faf9f9;
+
+  --theme-shadow:          #353535;
+  --theme-border:          #353535;
+
+  /* Sketch border radii */
+  --sketch-radius:    2px 6px 3px 5px / 5px 3px 6px 2px;
+  --sketch-radius-sm: 1px 4px 2px 3px / 3px 2px 4px 1px;
+}
+
+/* ─── Global ─────────────────────────────────────────────────────────────── */
 body {
   background-color: var(--theme-bg);
+  color: var(--theme-text-dark);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
 }
 
-/* Header / navbar uses primary */
+h1, h2, h3, h4, h5, h6,
+.card-title, .fw-bold, .sketch-font {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--theme-text-dark);
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────────── */
+.card {
+  background-color: var(--theme-card-bg) !important;
+  border: 2px solid var(--theme-border) !important;
+  border-radius: var(--sketch-radius) !important;
+  box-shadow: 4px 4px 0px var(--theme-shadow) !important;
+}
+
+.card-header {
+  background-color: var(--theme-card-bg) !important;
+  border-bottom: 2px solid var(--theme-border) !important;
+  color: var(--theme-text-dark) !important;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  border-radius: var(--sketch-radius-sm) var(--sketch-radius-sm) 0 0 !important;
+}
+
+.card-footer {
+  background-color: var(--theme-card-bg) !important;
+  border-top: 2px solid var(--theme-border) !important;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
 .theme-header {
-  background-color: var(--theme-primary) !important;
-  color: white;
+  background-color: var(--theme-text-dark) !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid var(--theme-border) !important;
+}
+.theme-header-subtitle {
+  color: var(--theme-btn-cancel) !important;
+  font-family: 'Patrick Hand', cursive;
 }
 
-/* Cards and panels use background */
-.theme-bg {
-  background-color: var(--theme-bg) !important;
+/* ─── Buttons — shared base ──────────────────────────────────────────────── */
+.btn {
+  font-size: 0.9rem;
+  letter-spacing: 0.4px;
+  border-radius: var(--sketch-radius-sm) !important;
+  border: 2px solid var(--theme-border) !important;
+  transition: box-shadow 0.12s ease, transform 0.1s ease !important;
+}
+.btn:hover  { transform: translate(-1px, -1px); }
+.btn:active { transform: translate(1px, 1px); }
+
+/* Primary CTA — steel blue — login, start exam */
+.theme-btn-primary {
+  background-color: var(--theme-btn-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-primary:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Confirm / Save — sage green — confirm answer, upload, activate */
+.theme-btn-confirm {
+  background-color: var(--theme-btn-confirm) !important;
+  color: var(--theme-text-dark) !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-confirm:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Navigate — teal — next button */
+.theme-btn-navigate {
+  background-color: var(--theme-btn-navigate) !important;
+  color: #ffffff !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-navigate:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Destructive — red — finish exam, deactivate, yes submit */
+.theme-btn-destructive {
+  background-color: var(--theme-btn-destructive) !important;
+  color: #ffffff !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-destructive:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Cancel — warm grey — go back, clear */
+.theme-btn-cancel {
+  background-color: var(--theme-btn-cancel) !important;
+  color: var(--theme-text-dark) !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-cancel:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Neutral — yellow — export, logout */
+.theme-btn-neutral {
+  background-color: var(--theme-btn-neutral) !important;
+  color: var(--theme-text-dark) !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-neutral:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Ghost — almost white — previous, non-altering */
+.theme-btn-ghost {
+  background-color: var(--theme-btn-ghost) !important;
+  color: var(--theme-text-dark) !important;
+  box-shadow: 3px 3px 0px var(--theme-shadow);
+}
+.theme-btn-ghost:hover { box-shadow: 4px 4px 0px var(--theme-shadow); }
+
+/* Outline variant — for header buttons on dark bg */
+.theme-btn-outline {
+  background: transparent !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 2px 2px 0px rgba(255,255,255,0.3);
+}
+.theme-btn-outline:hover { background-color: rgba(255,255,255,0.1) !important; }
+
+/* ─── Text ───────────────────────────────────────────────────────────────── */
+.theme-text-dark  { color: var(--theme-text-dark)  !important; }
+.theme-text-muted { color: var(--theme-text-muted) !important; }
+
+/* ─── Icons — inherit dark grey ──────────────────────────────────────────── */
+svg { color: var(--theme-text-dark); }
+.theme-header svg { color: #ffffff; }
+
+/* ─── Badges ─────────────────────────────────────────────────────────────── */
+.theme-badge {
+  background-color: var(--theme-btn-primary) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: var(--sketch-radius-sm) !important;
 }
 
-/* Secondary panels e.g. left nav */
-.theme-secondary-bg {
-  background-color: var(--theme-secondary) !important;
-  color: white;
+/* ─── Question nav grid ──────────────────────────────────────────────────── */
+.theme-nav-active {
+  background-color: var(--theme-btn-primary) !important;
+  color: #ffffff !important;
+  border: 2px solid var(--theme-border) !important;
+  box-shadow: 2px 2px 0px var(--theme-shadow);
+}
+.theme-nav-answered {
+  background-color: var(--theme-btn-confirm) !important;
+  color: var(--theme-text-dark) !important;
+  border: 2px solid var(--theme-border) !important;
+  box-shadow: 2px 2px 0px var(--theme-shadow);
+}
+.theme-nav-default {
+  background-color: var(--theme-btn-ghost) !important;
+  color: var(--theme-text-dark) !important;
+  border: 2px solid var(--theme-border) !important;
+  box-shadow: 2px 2px 0px var(--theme-shadow);
 }
 
-/* Text colours */
-.theme-primary-text {
-  color: var(--theme-primary) !important;
-}
-
-.theme-secondary-text {
-  color: var(--theme-secondary) !important;
-}
-
-/* Borders */
-.theme-border {
-  border-color: var(--theme-primary) !important;
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+.theme-footer {
+  background-color: var(--theme-card-bg) !important;
+  color: var(--theme-text-muted) !important;
+  border-top: 2px solid var(--theme-border) !important;
 }
