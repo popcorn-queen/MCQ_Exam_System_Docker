@@ -3,9 +3,6 @@
   font-family: 'Lucida Console', 'Courier New', monospace !important;
 }
 
-
-   Overridden at runtime by useBranding() from public/config.json.
-   ─────────────────────────────────────────────────────────────────────────── */
 :root {
   --theme-bg:              #fefee3;
   --theme-card-bg:         #ffffff;
