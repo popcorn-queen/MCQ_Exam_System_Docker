@@ -1,3 +1,41 @@
+
+:root {
+  --theme-primary: #0d6efd;
+  --theme-secondary: #6c757d;
+  --theme-bg: #f8f9fa;
+}
+
 body {
-  background-color: #f8f9fa;
+  background-color: var(--theme-bg);
+}
+
+/* Header / navbar uses primary */
+.theme-header {
+  background-color: var(--theme-primary) !important;
+  color: white;
+}
+
+/* Cards and panels use background */
+.theme-bg {
+  background-color: var(--theme-bg) !important;
+}
+
+/* Secondary panels e.g. left nav */
+.theme-secondary-bg {
+  background-color: var(--theme-secondary) !important;
+  color: white;
+}
+
+/* Text colours */
+.theme-primary-text {
+  color: var(--theme-primary) !important;
+}
+
+.theme-secondary-text {
+  color: var(--theme-secondary) !important;
+}
+
+/* Borders */
+.theme-border {
+  border-color: var(--theme-primary) !important;
 }

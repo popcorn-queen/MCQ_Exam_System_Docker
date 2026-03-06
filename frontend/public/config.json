@@ -1,6 +1,10 @@
-
 {
   "schoolName": "Your School Name",
   "logoFile": "logo.png",
-  "bgColor": "#ffffff"
+  "bgColor": "#ffffff",
+  "theme": {
+    "primary": "#ffffff",
+    "secondary": "#0f0f0f",
+    "background": "#00ffff"
+  }
 }
