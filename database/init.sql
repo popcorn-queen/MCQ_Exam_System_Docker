@@ -1,4 +1,3 @@
-
 CREATE TABLE exam_config (
   id SERIAL PRIMARY KEY,
   config_json JSONB,
@@ -20,5 +19,6 @@ CREATE TABLE student_attempts (
   max_score INTEGER,
   percentage FLOAT,
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  answers_json JSONB
+  answers_json JSONB,
+  tab_switches INTEGER DEFAULT 0
 );
