@@ -14,6 +14,15 @@ function shuffle(arr) {
   return a;
 }
 
+// Check if a roll number has already submitted
+router.get("/check/:roll", async (req, res) => {
+  const { roll } = req.params;
+  const result = await pool.query(
+    "SELECT id FROM student_attempts WHERE roll_number=$1", [roll]
+  );
+  res.json({ submitted: result.rows.length > 0 });
+});
+
 // Check if exam is active — returns questions randomised/sliced per config
 router.get("/status", async (req, res) => {
   const configResult = await pool.query(
@@ -46,14 +55,14 @@ router.get("/status", async (req, res) => {
 
 // Submit answers
 router.post("/submit", async (req, res) => {
-  const { roll_number, class: cls, section, answers } = req.body;
+  const { roll_number, class: cls, section, answers, questions } = req.body;
 
   const check = await pool.query(
     "SELECT * FROM student_attempts WHERE roll_number=$1", [roll_number]
   );
   if (check.rows.length) return res.status(400).json({ message: "Already submitted" });
 
-  const graderResp = await axios.post("http://python-service:8000/grade", { answers });
+  const graderResp = await axios.post("http://python-service:8000/grade", { answers, questions });
   const { score, max_score, percentage } = graderResp.data;
 
   const insert = await pool.query(

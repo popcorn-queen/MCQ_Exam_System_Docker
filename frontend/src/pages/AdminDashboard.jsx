@@ -60,6 +60,18 @@ export default function AdminDashboard() {
     } catch { setUploadStatus("❌ Upload failed — check your JSON format."); }
   };
 
+  const clearQuestions = async () => {
+    if (!window.confirm("Are you sure you want to clear all uploaded questions? This cannot be undone.")) return;
+    await axios.delete("/api/admin/clear-questions", { headers });
+    setUploadStatus(""); setQuestions([]); fetchAll();
+  };
+
+  const clearResults = async () => {
+    if (!window.confirm("Are you sure you want to clear all student results? This cannot be undone.")) return;
+    await axios.delete("/api/admin/clear-results", { headers });
+    setResults([]);
+  };
+
   const configValid = config.subject && config.durationMinutes > 0 && config.questionsToShow > 0;
 
   const activateExam = async () => {
@@ -103,11 +115,20 @@ export default function AdminDashboard() {
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Teacher Dashboard</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Teacher Dashboard</h1>
+        <button className="btn btn-outline-danger" onClick={() => { localStorage.removeItem("adminToken"); window.location.href = "/admin"; }}>Logout</button>
+      </div>
 
       {/* Upload Questions */}
       <div className="card mb-4">
-        <div className="card-header fw-semibold">Upload Question Paper (JSON)</div>
+        <div className="card-header fw-semibold d-flex justify-content-between align-items-center">
+          Upload Question Paper (JSON)
+          {questions.length > 0 && (
+            <button className="btn btn-outline-danger btn-sm" onClick={clearQuestions}>🗑 Clear Questions</button>
+          )}
+        </div>
+
         <div className="card-body">
           <div className="mb-2 text-muted small">
             Format: <code>{"{ \"questions\": [{ \"question\": \"...\", \"type\": \"single|multiple\", \"options\": [...], \"correctAnswer\": \"...\", \"weight\": 1 }] }"}</code>
@@ -120,7 +141,7 @@ export default function AdminDashboard() {
           {questions.length > 0 && (
             <div className="mt-3">
               <div className="text-muted small mb-1">{questions.length} questions currently loaded:</div>
-              <ul className="list-group list-group-flush" style={{ maxHeight: 200, overflowY: "auto" }}>
+              <ul className="list-group list-group-flush" style={{ maxHeight: 385, overflowY: "auto" }}>
                 {questions.map((q, i) => (
                   <li key={i} className="list-group-item py-1 small">
                     <span className="badge bg-secondary me-2">{q.type}</span>{q.question}
@@ -198,6 +219,9 @@ export default function AdminDashboard() {
           Student Results
           {results.length > 0 && <span className="badge bg-primary ms-2">{results.length}</span>}
           <span className="ms-2 text-success small">● Live</span>
+          {results.length > 0 && (
+            <button className="btn btn-outline-danger btn-sm ms-auto" onClick={clearResults}>🗑 Clear Results</button>
+          )}
         </div>
         <div className="card-body p-0">
           {sorted.length === 0
@@ -205,7 +229,7 @@ export default function AdminDashboard() {
             : <table className="table table-hover mb-0">
                 <thead className="table-light">
                   <tr>
-                    {[["roll_number","Roll"],["class","Class"],["section","Section"],["score","Score"],["percentage","Percentage"],["submitted_at","Submitted At"]].map(([field, label]) => (
+                    {[["roll_number","Roll"],["class","Class"],["section","Section"],["percentage","Grade %"],["submitted_at","Submitted At"]].map(([field, label]) => (
                       <th key={field} onClick={() => handleSort(field)} style={{ cursor: "pointer", userSelect: "none" }}>
                         {label}<SortIcon field={field} />
                       </th>
@@ -216,7 +240,6 @@ export default function AdminDashboard() {
                   {sorted.map(r => (
                     <tr key={r.id}>
                       <td>{r.roll_number}</td><td>{r.class}</td><td>{r.section}</td>
-                      <td>{r.score}/{r.max_score}</td>
                       <td>{r.percentage?.toFixed(2)}%</td>
                       <td>{new Date(r.submitted_at).toLocaleString()}</td>
                     </tr>
